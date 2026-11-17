@@ -56,7 +56,7 @@
 
   function startCountdown() {
     stopCountdown();
-    if (showingWinner) return;
+    if (!active.size || showingWinner) return;
     deadline = Date.now() + 5000;
     countdown.hidden = false;
     tick();
@@ -111,10 +111,10 @@
     active.delete(event.pointerId);
     updateStatus();
     if (showingWinner) return;
-    startCountdown();
+    if (active.size) startCountdown();
+    else stopCountdown();
   }
 
   document.addEventListener("pointerup", releaseTouch);
   document.addEventListener("pointercancel", releaseTouch);
-  startCountdown();
 })();
