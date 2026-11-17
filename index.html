@@ -3,41 +3,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#f5f3ee" />
-    <meta name="description" content="Un juego de dedos: mantén pulsada la pantalla y descubre qué color sale." />
-    <title>Dedos al azar</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <meta name="theme-color" content="#f7f6f1" />
+    <meta name="description" content="Mueve hasta cinco dedos y sigue cada uno por su color." />
+    <title>Dedos de colores</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="app" id="game" aria-live="polite">
-      <section class="game-card">
-        <h1>Dedos <span>al azar</span></h1>
-        <p class="intro">Mantén los dedos en la pantalla.</p>
-
-        <div class="stage" id="stage">
-          <div class="touch-points" id="touchPoints" aria-hidden="true"></div>
-          <div class="result" id="result" hidden>
-            <span class="result-caption">EL COLOR ELEGIDO</span>
-            <span class="result-swatch" id="resultSwatch"></span>
-            <strong id="resultName"></strong>
-            <button class="reroll" id="reroll" type="button">Sortear otra vez</button>
-          </div>
-          <div class="idle" id="idle">
-            <p id="instruction">Toca aquí</p>
-          </div>
-          <div class="countdown" id="countdown" hidden>
-            <span class="count-label">ELIGIENDO EN</span>
-            <strong id="countNumber">5</strong>
-            <span class="count-unit">segundos</span>
-          </div>
-        </div>
-
-        <div class="status-row"><span id="help">Hasta 5 dedos</span><span class="counter" id="counter">0 / 5</span></div>
-      </section>
-      <footer>UN POCO DE AZAR, MUCHA DIVERSIÓN <span>✳</span></footer>
+    <main class="play-area" id="playArea" aria-label="Área para mover los dedos">
+      <p class="hint" id="hint">Toca y mueve hasta cinco dedos</p>
+      <div class="touch-points" id="touchPoints" aria-hidden="true"></div>
+      <span class="counter" id="counter">0 / 5</span>
     </main>
     <script src="app.js"></script>
   </body>
