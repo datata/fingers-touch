@@ -11,8 +11,6 @@
   const hint = document.querySelector("#hint");
   const counter = document.querySelector("#counter");
   const countdown = document.querySelector("#countdown");
-  const winner = document.querySelector("#winner");
-  const winnerName = document.querySelector("#winnerName");
   const active = new Map();
   let timer = null;
   let deadline = 0;
@@ -49,8 +47,6 @@
     area.style.setProperty("--winner-color", color.hex);
     area.style.backgroundColor = color.hex;
     area.classList.add("has-winner");
-    winnerName.textContent = color.name;
-    winner.hidden = false;
     for (const record of records) record.marker.remove();
   }
 
@@ -68,7 +64,6 @@
     area.classList.remove("has-winner");
     area.style.removeProperty("--winner-color");
     area.style.removeProperty("background-color");
-    winner.hidden = true;
     updateStatus();
   }
 

@@ -1,1 +1,32 @@
-*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0}body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f7f6f1;color:#333}.play-area{position:relative;width:100%;height:100%;height:100dvh;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;background:#f7f6f1;transition:background-color .35s ease}.play-area.has-winner{background:var(--winner-color)}.hint{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin:0;color:#93958d;font-size:14px;pointer-events:none}.hint[hidden],[hidden]{display:none!important}.counter{position:absolute;right:18px;top:16px;color:#a1a39c;font-size:12px;font-variant-numeric:tabular-nums;pointer-events:none}.countdown{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:clamp(88px,24vw,180px);line-height:1;font-weight:750;letter-spacing:-.08em;font-variant-numeric:tabular-nums;color:#41443b;opacity:.18;pointer-events:none}.has-winner .counter{color:#36382f88}.touch-points{position:absolute;inset:0;pointer-events:none}.finger-color{position:absolute;width:96px;height:96px;border-radius:50%;background:var(--color);box-shadow:0 8px 28px color-mix(in srgb,var(--color) 42%,transparent);transform:translate(-50%,0) scale(.45);opacity:0;transition:left .06s linear,top .06s linear,transform .2s cubic-bezier(.2,.8,.2,1),opacity .18s ease-out}.finger-color.visible{transform:translate(-50%,0) scale(1);opacity:1}.winner{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;color:#292b25;animation:show-winner .3s ease-out}.winner strong{font-size:clamp(54px,14vw,112px);line-height:.95;font-weight:750;letter-spacing:-.07em}.winner span{font-size:14px;color:#292b25b5}.winner[hidden]{display:none}@keyframes show-winner{from{opacity:0;transform:translate(-50%,-50%) scale(.92)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+* { box-sizing: border-box; }
+
+html, body { width: 100%; height: 100%; margin: 0; }
+
+body {
+  color: #333;
+  background: #f7f6f1;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.play-area {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background: #f7f6f1;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: background-color .35s ease;
+}
+
+.play-area.has-winner { background: var(--winner-color); }
+.hint { position: absolute; inset: 50% auto auto 50%; margin: 0; transform: translate(-50%, -50%); color: #93958d; font-size: 14px; pointer-events: none; }
+.hint[hidden], [hidden] { display: none !important; }
+.counter { position: absolute; top: 16px; right: 18px; color: #a1a39c; font-size: 12px; font-variant-numeric: tabular-nums; pointer-events: none; }
+.countdown { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #41443b; font-size: clamp(88px, 24vw, 180px); font-weight: 750; font-variant-numeric: tabular-nums; letter-spacing: -.08em; line-height: 1; opacity: .18; pointer-events: none; }
+.has-winner .counter { color: #36382f88; }
+.touch-points { position: absolute; inset: 0; pointer-events: none; }
+.finger-color { position: absolute; width: 128px; height: 128px; border-radius: 50%; background: var(--color); box-shadow: 0 8px 28px color-mix(in srgb, var(--color) 42%, transparent); opacity: 0; transform: translate(-50%, 0) scale(.45); transition: left .06s linear, top .06s linear, transform .2s cubic-bezier(.2,.8,.2,1), opacity .18s ease-out; }
+.finger-color.visible { opacity: 1; transform: translate(-50%, 0) scale(1); }
