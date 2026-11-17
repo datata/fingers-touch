@@ -47,6 +47,7 @@
     const color = colors[chosen.colorIndex];
     showingWinner = true;
     area.style.setProperty("--winner-color", color.hex);
+    area.style.backgroundColor = color.hex;
     area.classList.add("has-winner");
     winnerName.textContent = color.name;
     winner.hidden = false;
@@ -66,6 +67,7 @@
     showingWinner = false;
     area.classList.remove("has-winner");
     area.style.removeProperty("--winner-color");
+    area.style.removeProperty("background-color");
     winner.hidden = true;
     updateStatus();
   }
