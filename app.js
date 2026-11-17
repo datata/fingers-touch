@@ -7,58 +7,63 @@
     { name: "Violeta", hex: "#AD91C9" },
   ];
   const stage = document.querySelector("#stage");
+  const touchPoints = document.querySelector("#touchPoints");
   const idle = document.querySelector("#idle");
   const countdown = document.querySelector("#countdown");
   const countNumber = document.querySelector("#countNumber");
   const counter = document.querySelector("#counter");
-  const players = document.querySelector("#players");
   const help = document.querySelector("#help");
   const result = document.querySelector("#result");
   const resultSwatch = document.querySelector("#resultSwatch");
   const resultName = document.querySelector("#resultName");
-  const slots = colors.map((color, index) => {
-    const item = document.createElement("div");
-    item.className = "player";
-    item.style.setProperty("--color", color.hex);
-    item.innerHTML = `<span class="player-dot"></span><span class="player-name">${color.name}</span>`;
-    players.append(item);
-    return item;
-  });
-
-  let activeTouches = new Map();
+  const reroll = document.querySelector("#reroll");
+  const activeTouches = new Map();
   let timer = null;
   let deadline = 0;
-  let previousCount = 0;
-  let selectedColor = null;
+  let lastColorIndex = -1;
 
-  function syncTouches(touches) {
-    const next = new Map();
-    Array.from(touches).slice(0, 5).forEach((touch, index) => {
-      next.set(touch.identifier, index);
-    });
-    const groupChanged = next.size !== activeTouches.size ||
-      Array.from(next.keys()).some((id) => !activeTouches.has(id));
-    activeTouches = next;
-    update(groupChanged);
+  function position(record, pointer) {
+    const bounds = stage.getBoundingClientRect();
+    record.x = pointer.clientX - bounds.left;
+    record.y = pointer.clientY - bounds.top;
+    record.element.style.left = `${record.x}px`;
+    record.element.style.top = `${record.y + 34}px`;
   }
 
-  function update(groupChanged = false) {
+  function addTouch(pointer) {
+    if (activeTouches.has(pointer.pointerId) || activeTouches.size >= 5) return;
+    const usedColors = new Set(Array.from(activeTouches.values(), (record) => record.colorIndex));
+    const colorIndex = colors.findIndex((_, index) => !usedColors.has(index));
+    const color = colors[colorIndex];
+    const element = document.createElement("div");
+    element.className = "touch-tag";
+    element.style.setProperty("--color", color.hex);
+    element.textContent = color.name;
+    touchPoints.append(element);
+    const record = { colorIndex, element, x: 0, y: 0 };
+    activeTouches.set(pointer.pointerId, record);
+    position(record, pointer);
+  }
+
+  function update(pointer) {
+    const record = activeTouches.get(pointer.pointerId);
+    if (record) position(record, pointer);
+  }
+
+  function syncUI(groupChanged) {
     const count = activeTouches.size;
-    counter.innerHTML = `${count} <i>/ 5</i>`;
-    slots.forEach((slot, index) => slot.classList.toggle("active", index < count));
+    counter.textContent = `${count} / 5`;
     stage.classList.toggle("is-active", count > 0);
-    if (groupChanged || count !== previousCount) {
-      clearInterval(timer);
-      timer = null;
-      selectedColor = null;
-      result.hidden = true;
-      if (count) startCountdown();
-      else {
-        idle.hidden = false;
-        countdown.hidden = true;
-        help.textContent = "Cuando todos estén listos, empieza la cuenta atrás.";
-      }
-      previousCount = count;
+    if (!groupChanged) return;
+
+    clearInterval(timer);
+    timer = null;
+    result.hidden = true;
+    if (count) startCountdown();
+    else {
+      idle.hidden = false;
+      countdown.hidden = true;
+      help.textContent = "Hasta 5 dedos";
     }
   }
 
@@ -66,7 +71,7 @@
     idle.hidden = true;
     result.hidden = true;
     countdown.hidden = false;
-    help.textContent = "¡No levantes ningún dedo!";
+    help.textContent = "No levantes los dedos";
     deadline = Date.now() + 5000;
     tick();
     timer = setInterval(tick, 100);
@@ -75,28 +80,46 @@
   function tick() {
     const remaining = Math.max(0, deadline - Date.now());
     countNumber.textContent = Math.ceil(remaining / 1000);
-    if (remaining <= 0) {
-      clearInterval(timer);
-      timer = null;
-      countdown.hidden = true;
-      const color = colors[Math.floor(Math.random() * activeTouches.size)];
-      selectedColor = color;
-      resultSwatch.style.setProperty("--color", color.hex);
-      resultSwatch.style.background = color.hex;
-      resultName.textContent = color.name;
-      result.hidden = false;
-      help.textContent = "¡Ya tenemos un color! Sigue pulsando o levanta los dedos para volver a jugar.";
-    }
+    if (remaining > 0) return;
+
+    clearInterval(timer);
+    timer = null;
+    countdown.hidden = true;
+    const records = Array.from(activeTouches.values());
+    if (!records.length) return;
+    const options = records.length > 1
+      ? records.filter((record) => record.colorIndex !== lastColorIndex)
+      : records;
+    const chosen = options[Math.floor(Math.random() * options.length)];
+    const color = colors[chosen.colorIndex];
+    lastColorIndex = chosen.colorIndex;
+    resultSwatch.style.setProperty("--color", color.hex);
+    resultSwatch.style.background = color.hex;
+    resultName.textContent = color.name;
+    result.hidden = false;
+    help.textContent = "";
   }
 
-  document.addEventListener("touchstart", (event) => {
+  stage.addEventListener("pointerdown", (event) => {
     event.preventDefault();
-    syncTouches(event.touches);
-  }, { passive: false });
-  document.addEventListener("touchmove", (event) => {
-    event.preventDefault();
-    syncTouches(event.touches);
-  }, { passive: false });
-  document.addEventListener("touchend", (event) => syncTouches(event.touches));
-  document.addEventListener("touchcancel", (event) => syncTouches(event.touches));
+    stage.setPointerCapture(event.pointerId);
+    const before = activeTouches.size;
+    addTouch(event);
+    syncUI(activeTouches.size !== before);
+  });
+  stage.addEventListener("pointermove", update);
+  stage.addEventListener("pointerup", (event) => {
+    if (!activeTouches.has(event.pointerId)) return;
+    activeTouches.get(event.pointerId).element.remove();
+    activeTouches.delete(event.pointerId);
+    syncUI(true);
+  });
+  stage.addEventListener("pointercancel", (event) => {
+    if (!activeTouches.has(event.pointerId)) return;
+    activeTouches.get(event.pointerId).element.remove();
+    activeTouches.delete(event.pointerId);
+    syncUI(true);
+  });
+  reroll.addEventListener("pointerdown", (event) => event.stopPropagation());
+  reroll.addEventListener("click", startCountdown);
 })();

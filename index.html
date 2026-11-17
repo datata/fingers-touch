@@ -13,26 +13,20 @@
   </head>
   <body>
     <main class="app" id="game" aria-live="polite">
-      <header class="topbar">
-        <a class="brand" href="#" aria-label="Dedos al azar, inicio"><span class="brand-mark" aria-hidden="true">✳</span> JUEGO DE DEDOS</a>
-        <span class="limit"><span class="limit-dot"></span> HASTA 5 JUGADORES</span>
-      </header>
-
       <section class="game-card">
-        <div class="eyebrow"><span class="sparkle">✦</span> ¿QUIÉN SERÁ?</div>
         <h1>Dedos <span>al azar</span></h1>
-        <p class="intro">Pon tus dedos en la pantalla y deja que el azar decida.</p>
+        <p class="intro">Mantén los dedos en la pantalla.</p>
 
         <div class="stage" id="stage">
+          <div class="touch-points" id="touchPoints" aria-hidden="true"></div>
           <div class="result" id="result" hidden>
             <span class="result-caption">EL COLOR ELEGIDO</span>
             <span class="result-swatch" id="resultSwatch"></span>
             <strong id="resultName"></strong>
+            <button class="reroll" id="reroll" type="button">Sortear otra vez</button>
           </div>
           <div class="idle" id="idle">
-            <div class="hand-icon" aria-hidden="true"><span>✋</span><i></i></div>
-            <p id="instruction">Toca aquí con uno o más dedos</p>
-            <span class="stage-hint">MANTÉN LA PULSACIÓN</span>
+            <p id="instruction">Toca aquí</p>
           </div>
           <div class="countdown" id="countdown" hidden>
             <span class="count-label">ELIGIENDO EN</span>
@@ -41,12 +35,7 @@
           </div>
         </div>
 
-        <div class="players-head">
-          <span>DEDOS EN JUEGO</span>
-          <span class="counter" id="counter">0 <i>/ 5</i></span>
-        </div>
-        <div class="players" id="players" aria-label="Colores de los dedos"></div>
-        <p class="help" id="help">Cuando todos estén listos, empieza la cuenta atrás.</p>
+        <div class="status-row"><span id="help">Hasta 5 dedos</span><span class="counter" id="counter">0 / 5</span></div>
       </section>
       <footer>UN POCO DE AZAR, MUCHA DIVERSIÓN <span>✳</span></footer>
     </main>
