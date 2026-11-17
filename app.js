@@ -86,7 +86,6 @@
       const marker = document.createElement("div");
       marker.className = "finger-color";
       marker.style.setProperty("--color", color.hex);
-      marker.innerHTML = `<span class="swatch"></span><span>${color.name}</span>`;
       points.append(marker);
       const record = { colorIndex, marker };
       active.set(event.pointerId, record);
