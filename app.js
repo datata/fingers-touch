@@ -42,9 +42,9 @@
 
     stopCountdown();
     const records = Array.from(active.values());
-    if (!records.length) return;
-    const chosen = records[Math.floor(Math.random() * records.length)];
-    const color = colors[chosen.colorIndex];
+    const color = records.length
+      ? colors[records[Math.floor(Math.random() * records.length)].colorIndex]
+      : colors[Math.floor(Math.random() * colors.length)];
     showingWinner = true;
     area.style.setProperty("--winner-color", color.hex);
     area.style.backgroundColor = color.hex;
@@ -56,7 +56,7 @@
 
   function startCountdown() {
     stopCountdown();
-    if (!active.size || showingWinner) return;
+    if (showingWinner) return;
     deadline = Date.now() + 5000;
     countdown.hidden = false;
     tick();
@@ -72,15 +72,14 @@
     updateStatus();
   }
 
-  area.addEventListener("touchstart", (event) => {
+  area.addEventListener("pointerdown", (event) => {
     event.preventDefault();
     if (showingWinner) {
       if (active.size) return;
       resetWinner();
     }
     let added = false;
-    for (const touch of event.changedTouches) {
-      if (active.size >= 5 || active.has(touch.identifier)) continue;
+    if (active.size < 5 && !active.has(event.pointerId)) {
       const used = new Set(Array.from(active.values(), (record) => record.colorIndex));
       const colorIndex = colors.findIndex((_, index) => !used.has(index));
       const color = colors[colorIndex];
@@ -90,40 +89,33 @@
       marker.innerHTML = `<span class="swatch"></span><span>${color.name}</span>`;
       points.append(marker);
       const record = { colorIndex, marker };
-      active.set(touch.identifier, record);
-      moveMarker(touch, record);
+      active.set(event.pointerId, record);
+      moveMarker(event, record);
       requestAnimationFrame(() => marker.classList.add("visible"));
       added = true;
     }
     updateStatus();
     if (added) startCountdown();
-  }, { passive: false });
+  });
 
-  document.addEventListener("touchmove", (event) => {
+  document.addEventListener("pointermove", (event) => {
     event.preventDefault();
     if (showingWinner) return;
-    for (const touch of event.changedTouches) {
-      const record = active.get(touch.identifier);
-      if (record) moveMarker(touch, record);
-    }
-  }, { passive: false });
+    const record = active.get(event.pointerId);
+    if (record) moveMarker(event, record);
+  });
 
-  function releaseTouches(event) {
-    let removed = false;
-    for (const touch of event.changedTouches) {
-      const record = active.get(touch.identifier);
-      if (!record) continue;
-      record.marker.remove();
-      active.delete(touch.identifier);
-      removed = true;
-    }
-    if (!removed) return;
+  function releaseTouch(event) {
+    const record = active.get(event.pointerId);
+    if (!record) return;
+    record.marker.remove();
+    active.delete(event.pointerId);
     updateStatus();
     if (showingWinner) return;
-    if (active.size) startCountdown();
-    else stopCountdown();
+    startCountdown();
   }
 
-  document.addEventListener("touchend", releaseTouches);
-  document.addEventListener("touchcancel", releaseTouches);
+  document.addEventListener("pointerup", releaseTouch);
+  document.addEventListener("pointercancel", releaseTouch);
+  startCountdown();
 })();
